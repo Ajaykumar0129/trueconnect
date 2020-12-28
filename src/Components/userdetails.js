@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {Form,Button,InputGroup,Image} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Indiaflag from '../Asset/ind.png'
@@ -7,6 +7,7 @@ import Chinflag from '../Asset/china.png'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useHistory } from "react-router-dom";
+import Navbar from '../Components/header'
 const UserDetails=()=>{
     let history = useHistory();
     const [name,setName]=useState('')
@@ -19,6 +20,8 @@ const UserDetails=()=>{
     const China_state=['Beijing','Yunnan','Hubei']
 
     const [validated, setValidated] = useState(false);
+
+  
 
     const handleSubmit = (event) => {
       const form = event.currentTarget;
@@ -40,8 +43,10 @@ const UserDetails=()=>{
             progress: undefined,
             });
       }
-      if(country==="India" && phonenumber.length!=10 || ((/^[0]?[6789]\d{9}$/).test(phonenumber)==false))
+      if(country==="India" && phonenumber.length==10 && ((/^[0]?[6789]\d{9}$/).test(phonenumber)==false) || phonenumber.length!=10)
       {
+        event.preventDefault();
+        event.stopPropagation();
         return toast.error('Invalid PhoneNumber', {
             position: "bottom-right",
             autoClose: 1200,
@@ -57,7 +62,7 @@ const UserDetails=()=>{
        if(name.length!=0 && gender.length!=0 && phonenumber.length==10)
        {
         history.push({
-            pathname: '/',
+            pathname: '/CompanyDetails',
             state:{userdetails:{
                 name:name,
                 gender:gender,
@@ -70,9 +75,18 @@ const UserDetails=()=>{
 
     return(
         <> 
-        <div style={{display:'flex',justifyContent:'center',alignItems:'center',marginTop:50}}>
-        <Form noValidate validated={validated} onSubmit={handleSubmit} style={{width:400}}>
+        <Navbar step={1}/>
+
+        <div style={{display:"flex",justifyContent:'center',alignItems:'center',marginTop:5}}>
             <h3> Add your personal details</h3>
+           </div>
+
+        <div style={{display:'flex',justifyContent:'center',alignItems:'center',marginTop:10}}>
+          
+        <div style={{ border: "1px solid black",width:550,display:"flex",justifyContent:'center',alignItems:'center',borderRadius:10}}>
+          
+        <Form noValidate validated={validated} onSubmit={handleSubmit} style={{width:400}}>
+         
          <Form.Group>
            <Form.Label>Full Name</Form.Label>
            <Form.Control type="text" placeholder="Enter FullName" value={name}   required onChange={(e)=>setName(e.target.value)}/>
@@ -132,10 +146,10 @@ const UserDetails=()=>{
         <Button variant="success" size="lg" block type="submit">Next</Button>
        <ToastContainer/>
        <Form.Group>
-           <Form.Label style={{marginTop:25,fontSize:15,display:'flex',justifyContent:'center',alignContent:'center'}}>Already have account?   <Button variant="link" style={{fontSize:15,marginTop:-7,marginLeft:-5}}>Login</Button></Form.Label> 
+           <Form.Label style={{marginTop:25,fontSize:15,display:'flex',justifyContent:'center',alignContent:'center'}}>Already have account?   <Button variant="link" onClick={()=>{history.push("/")}} style={{fontSize:15,marginTop:-7,marginLeft:-5}}>Login</Button></Form.Label> 
         </Form.Group>
         </Form>
-       
+       </div>
         </div>
         </>
     )
